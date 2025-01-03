@@ -1,28 +1,12 @@
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Scanner;
 import java.io.FileInputStream;
 
 public class Main {
     private static final int KEY_EVENTS_OFFSET = 18;
 
     public static void main(String[] args) {
-        String filePath = "C:\\Users\\Andrey\\Desktop\\st_A_20242.sor";
-        File file = new File(filePath);
-        System.out.println(file.getName());
-        System.out.println(file.canRead());
-        System.out.println(file.canWrite());
-        System.out.println(file.canExecute());
-        System.out.println(file.exists());
-        try(Scanner scanner = new Scanner(file)) {
-            System.out.println("cryto");
-            while (scanner.hasNext()) {
-                System.out.println(scanner.next());
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("beda " + e.getMessage());
-        }
+
+        String filePath = "OTDRs\\RFG1310НМ_1.sor";
 
         // Работа с файлом с использованием FileInputStream. Данные записаны побайтово: 1 байт - 2 символа в 16-ричной системе.
         try (FileInputStream fileInputStream = new FileInputStream(filePath)) {
