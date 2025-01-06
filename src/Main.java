@@ -9,7 +9,7 @@ public class Main {
     private static final int LONG_INT_HEX = 8;
     private static final double SPEED_OF_LIGHT = 299_792_458; // в м/с
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         int countEvents; // Общее количество событий в блоке KeyEvents
         int cursor; // Курсор для перемещения по бинарному файлу
@@ -28,6 +28,7 @@ public class Main {
             eventCursor = fileContent.lastIndexOf(compareToHex("KeyEvents")) + KEY_EVENTS_START_BLOCK + ONE_BYTE;
             countEvents = (int)compareToDec(hexScanner(fileContent, eventCursor, 1));
 
+            SaveData saveData = new SaveData();
             // Первое событие находится около курсора, перемещаем его на безопасное расстояние
             eventCursor -= KEY_EVENTS_OFFSET;;
             arrayEvent = new String[countEvents];
@@ -35,7 +36,7 @@ public class Main {
                 arrayEvent[i] = "";
                 hexNumber = compareToHex(i + 1, SHORT_INT_HEX);
                 eventCursor = cursor = fileContent.indexOf(hexNumber, eventCursor + KEY_EVENTS_OFFSET);
-                arrayEvent[i] += hexScanner(fileContent, cursor, SHORT_INT_HEX) + " "; // Порядковый номер
+                arrayEvent[i] += compareToDec(hexScanner(fileContent, cursor, SHORT_INT_HEX)) + " "; // Порядковый номер
                 cursor += SHORT_INT_HEX;
                 transitTime = compareToDec(flipHex(hexScanner(fileContent, cursor + ONE_BYTE, LONG_INT_HEX))) * Math.pow(10, -12); // Время распространения
                 arrayEvent[i] += (double)(Math.round(((transitTime * SPEED_OF_LIGHT) / refractionIndex) * 1000)) / 10000 + " "; // Расстояние до события
@@ -48,10 +49,9 @@ public class Main {
                     arrayEvent[i] += (double)compareToDec(flipHex(hexScanner(fileContent, cursor, SHORT_INT_HEX))) / 1000 + " ";
                 }
                 cursor += SHORT_INT_HEX;
-                arrayEvent[i] += -(double)compareToDec(invertHex(flipHex(hexScanner(fileContent, cursor, LONG_INT_HEX)))) / 1000 + " "; // Коэффициент отражения
-                cursor += LONG_INT_HEX;
+                arrayEvent[i] += -(double)compareToDec(invertHex(flipHex(hexScanner(fileContent, cursor, LONG_INT_HEX)))) / 1000; // Коэффициент отражения
                 System.out.println("Событие №" + arrayEvent[i]);
-
+                saveData.saveToFile(arrayEvent[i]);
 
             }
             System.out.println("Всего зафиксированных событий: " + countEvents);
