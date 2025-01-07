@@ -22,8 +22,10 @@ public class SaveData {
         }
     }
 
-    public void saveToFile(String content) throws IOException {
-        fileWriter.append(content).append("\n");
-        fileWriter.flush();
+    public void saveToFile(String[] content) throws IOException {
+        for (int i = 0; i < content.length - 1; i++) {
+            fileWriter.append(content[i]).append("\n");
+            fileWriter.flush();
+        }
     }
 }
