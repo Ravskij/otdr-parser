@@ -1,7 +1,7 @@
 import java.io.FileInputStream;
 import java.io.IOException;
 
-public class OpenSor {
+public class FileReader {
     // Чтение данных из бинарного файла и запись содержимого в строку
     public static String sorReader(String path) {
         // Данные в файле записаны побайтово: 1 байт - 2 символа в 16-ричной системе.
