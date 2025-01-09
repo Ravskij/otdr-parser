@@ -22,7 +22,7 @@ public class HexKit {
     // Вывод N-ого количества символов из основной строки начиная с определенного значения
     public static String hexScanner(String fileContent, int cursor, int readBytes) {
         StringBuilder hexContent = new StringBuilder();
-        for (int i = 0; i < readBytes; i += HexContentProcessing.ONE_BYTE) {
+        for (int i = 0; i < readBytes; i += HexProcessing.ONE_BYTE) {
             hexContent.append(fileContent.charAt(cursor + i));
             hexContent.append(fileContent.charAt(cursor + i + 1));
         }
@@ -32,7 +32,7 @@ public class HexKit {
     // Побайтовый переворот 16-ричного числа
     public static String flipHex(String hexNumber) {
         StringBuilder negativeHexNumber = new StringBuilder();
-        for (int i = hexNumber.length() - 1; i > 0; i-= HexContentProcessing.ONE_BYTE) {
+        for (int i = hexNumber.length() - 1; i > 0; i-= HexProcessing.ONE_BYTE) {
             negativeHexNumber.append(hexNumber.charAt(i - 1));
             negativeHexNumber.append(hexNumber.charAt(i));
         }
@@ -42,7 +42,7 @@ public class HexKit {
     // Побитовое инвертирование 16-ричного числа
     public static String invertHex(String hexNumber) {
         long value = ~compareToDec(hexNumber) + 1 & 0xFFFFFFFFL;
-        return compareToHex((int)value, HexContentProcessing.LONG_INT_HEX);
+        return compareToHex((int)value, HexProcessing.LONG_INT_HEX);
     }
 
 }

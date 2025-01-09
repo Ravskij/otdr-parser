@@ -1,4 +1,4 @@
-public class HexContentProcessing {
+public class HexProcessing {
 
     static final int START_BLOCK = 18; // Смещение до "s" в "KeyEvents" или "FxdParams"
     static final int KEY_EVENTS_OFFSET = 86; // Минимальное расстояние между событиями
