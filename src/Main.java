@@ -10,10 +10,13 @@ public class Main {
         FileSaver saveData = new FileSaver(outputPath);
 
         if (fileContent != null) {
-            String[] eventContent = EventProcessing.extractEvents(fileContent);
+            String fxdParameters = HexContentProcessing.extractParameters(fileContent);
+            System.out.println(fxdParameters);
+            String[] eventContent = HexContentProcessing.extractEvents(fileContent);
             saveData.writeContent(eventContent);
         } else {
             System.out.println("Файл не найден или не удалось прочитать файл");
         }
     }
+
 }

@@ -1,4 +1,5 @@
-public class EventProcessing {
+public class HexContentProcessing {
+
     static final int START_BLOCK = 18; // Смещение до "s" в "KeyEvents" или "FxdParams"
     static final int KEY_EVENTS_OFFSET = 86; // Минимальное расстояние между событиями
     static final int ONE_BYTE = 2; // Пропуск или считывание двух символов (1 байт)
@@ -9,28 +10,40 @@ public class EventProcessing {
 
     static int cursor; // Курсор для перемещения по бинарному файлу
 
+    // Обработка блока FxdParams
     public static String extractParameters(String hexContent) {
         String date; // Дата и время измерений
         String distanceUnits; // Единицы измерения расстояния
+        String wavelength; // Длина волны
+
+        // Массив для построения событий из блока FxdParameters
+        StringBuilder arrayFxdParametersBuilder;
+        arrayFxdParametersBuilder = new StringBuilder();
 
         // Преобразование строки "FxdParams" к определенному виду для дальнейшего поиска блока FxdParams по файлу
         cursor = hexContent.lastIndexOf(HexKit.compareToHex("FxdParams")) + START_BLOCK + ONE_BYTE;
         date = String.valueOf(HexKit.compareToDec(HexKit.hexScanner(hexContent, cursor, LONG_INT_HEX)));
-        System.out.println(date);
+        arrayFxdParametersBuilder.append("Дата и время измерения: ").append(date).append("\n");
         cursor += LONG_INT_HEX;
         distanceUnits = "" + (char)HexKit.compareToDec(HexKit.hexScanner(hexContent, cursor, ONE_BYTE)) +
                 (char)HexKit.compareToDec(HexKit.hexScanner(hexContent, cursor + ONE_BYTE, ONE_BYTE));
-        System.out.println(distanceUnits);
-        return "";
+        arrayFxdParametersBuilder.append("Единицы измерения расстояния: ").append(distanceUnits).append("\n");
+        cursor += ONE_BYTE + ONE_BYTE;
+        wavelength = "" + HexKit.compareToDec(HexKit.flipHex(HexKit.hexScanner(hexContent, cursor, SHORT_INT_HEX))) / 10;
+        arrayFxdParametersBuilder.append("Длина волны: ").append(wavelength).append(" нм").append("\n");
+        cursor += SHORT_INT_HEX;
+
+        return arrayFxdParametersBuilder.toString();
     }
 
+    // Обработка блока KeyEvents
     public static String[] extractEvents(String hexContent) {
         int countEvents; // Общее количество событий в блоке KeyEvents
         int eventCursor; // Курсор начала каждого события
         double transitTime; // Время распространения импульса в с
 
         String hexNumber; // Десятичное число, приведенное к шестнадцатеричному
-        StringBuilder[] arrayEventBuilder; // Массив построения событий KeyEvents
+        StringBuilder[] arrayEventBuilder; // Массив для построения событий из блока KeyEvents
         String[] arrayEven; // Массив событий KeyEvents
 
         // Преобразование строки "KeyEvents" к определенному виду для дальнейшего поиска блока KeyEvents по файлу
@@ -40,7 +53,6 @@ public class EventProcessing {
         // Первое событие находится около курсора, перемещаем его на безопасное расстояние
         eventCursor -= KEY_EVENTS_OFFSET;
         arrayEventBuilder = new StringBuilder[countEvents];
-        arrayEven = new String[countEvents];
         for (int i = 0; i < countEvents; i++) {
             arrayEventBuilder[i] = new StringBuilder();
             hexNumber = HexKit.compareToHex(i + 1, SHORT_INT_HEX);
@@ -63,14 +75,18 @@ public class EventProcessing {
         }
         System.out.println("Всего зафиксированных событий: " + countEvents);
         arrayEven = convertToStringArray(arrayEventBuilder);
+
         return arrayEven;
     }
 
+    // Из StringBuilder[] в String[]
     public static String[] convertToStringArray(StringBuilder[] arrayEvent) {
         String[] outputString = new String[arrayEvent.length];
         for (int i = 0; i < arrayEvent.length; i++) {
             outputString[i] = arrayEvent[i].toString();
         }
+
         return outputString;
     }
+
 }
