@@ -1,3 +1,5 @@
+package processing;
+
 public class HexKit {
 
     // Метод преобразования String в String вида HEX

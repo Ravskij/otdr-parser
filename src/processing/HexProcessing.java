@@ -1,3 +1,7 @@
+package processing;
+
+import static processing.HexKit.*;
+
 public class HexProcessing {
 
     static final int START_BLOCK = 18; // Смещение до "s" в "KeyEvents" или "FxdParams"
@@ -47,30 +51,30 @@ public class HexProcessing {
         String[] arrayEven; // Массив событий KeyEvents
 
         // Преобразование строки "KeyEvents" к определенному виду для дальнейшего поиска блока KeyEvents по файлу
-        eventCursor = hexContent.lastIndexOf(HexKit.compareToHex("KeyEvents")) + START_BLOCK + ONE_BYTE;
-        countEvents = (int) HexKit.compareToDec(HexKit.hexScanner(hexContent, eventCursor, 1));
+        eventCursor = hexContent.lastIndexOf(compareToHex("KeyEvents")) + START_BLOCK + ONE_BYTE;
+        countEvents = (int) compareToDec(hexScanner(hexContent, eventCursor, 1));
 
         // Первое событие находится около курсора, перемещаем его на безопасное расстояние
         eventCursor -= KEY_EVENTS_OFFSET;
         arrayEventBuilder = new StringBuilder[countEvents];
         for (int i = 0; i < countEvents; i++) {
             arrayEventBuilder[i] = new StringBuilder();
-            hexNumber = HexKit.compareToHex(i + 1, SHORT_INT_HEX);
+            hexNumber = compareToHex(i + 1, SHORT_INT_HEX);
             eventCursor = cursor = hexContent.indexOf(hexNumber, eventCursor + KEY_EVENTS_OFFSET);
-            arrayEventBuilder[i].append(HexKit.compareToDec(HexKit.hexScanner(hexContent, cursor, SHORT_INT_HEX))).append("\t"); // Порядковый номер
+            arrayEventBuilder[i].append(compareToDec(hexScanner(hexContent, cursor, SHORT_INT_HEX))).append("\t"); // Порядковый номер
             cursor += SHORT_INT_HEX;
-            transitTime = HexKit.compareToDec(HexKit.flipHex(HexKit.hexScanner(hexContent, cursor + ONE_BYTE, LONG_INT_HEX))) * Math.pow(10, -12); // Время распространения
+            transitTime = compareToDec(flipHex(hexScanner(hexContent, cursor + ONE_BYTE, LONG_INT_HEX))) * Math.pow(10, -12); // Время распространения
             arrayEventBuilder[i].append((double) (Math.round(((transitTime * SPEED_OF_LIGHT) / REFRACTION_INDEX) * 1000)) / 10000).append("\t"); // Расстояние до события
             cursor += LONG_INT_HEX;
-            arrayEventBuilder[i].append((double) HexKit.compareToDec(HexKit.hexScanner(hexContent, cursor, SHORT_INT_HEX)) / 1000).append("\t"); // Километрическое затухание
+            arrayEventBuilder[i].append((double) compareToDec(hexScanner(hexContent, cursor, SHORT_INT_HEX)) / 1000).append("\t"); // Километрическое затухание
             cursor += SHORT_INT_HEX + ONE_BYTE;
-            if (HexKit.hexScanner(hexContent, cursor + ONE_BYTE, ONE_BYTE).equals("FF")) { // Затухание на событии
-                arrayEventBuilder[i].append(-(double) HexKit.compareToDec(HexKit.invertHex(HexKit.flipHex(HexKit.hexScanner(hexContent, cursor, SHORT_INT_HEX) + "FFFF"))) / 1000).append("\t");
+            if (hexScanner(hexContent, cursor + ONE_BYTE, ONE_BYTE).equals("FF")) { // Затухание на событии
+                arrayEventBuilder[i].append(-(double) compareToDec(invertHex(flipHex(hexScanner(hexContent, cursor, SHORT_INT_HEX) + "FFFF"))) / 1000).append("\t");
             } else {
-                arrayEventBuilder[i].append((double) HexKit.compareToDec(HexKit.flipHex(HexKit.hexScanner(hexContent, cursor, SHORT_INT_HEX))) / 1000).append("\t");
+                arrayEventBuilder[i].append((double) compareToDec(flipHex(hexScanner(hexContent, cursor, SHORT_INT_HEX))) / 1000).append("\t");
             }
             cursor += SHORT_INT_HEX;
-            arrayEventBuilder[i].append(-(double) HexKit.compareToDec(HexKit.invertHex(HexKit.flipHex(HexKit.hexScanner(hexContent, cursor, LONG_INT_HEX)))) / 1000); // Коэффициент отражения
+            arrayEventBuilder[i].append(-(double) compareToDec(invertHex(flipHex(hexScanner(hexContent, cursor, LONG_INT_HEX)))) / 1000); // Коэффициент отражения
             System.out.println("Событие №" + arrayEventBuilder[i]);
         }
         System.out.println("Всего зафиксированных событий: " + countEvents);
