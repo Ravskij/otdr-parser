@@ -1,5 +1,5 @@
 public class EventProcessing {
-    static final int KEY_EVENTS_START_BLOCK = 18; // Смещение до "s" в "KeyEvents"
+    static final int START_BLOCK = 18; // Смещение до "s" в "KeyEvents" или "FxdParams"
     static final int KEY_EVENTS_OFFSET = 86; // Минимальное расстояние между событиями
     static final int ONE_BYTE = 2; // Пропуск или считывание двух символов (1 байт)
     static final int SHORT_INT_HEX = 4; // Число символов, соответствующее short int (2 байта) в hex формате
@@ -7,9 +7,25 @@ public class EventProcessing {
     static final double SPEED_OF_LIGHT = 299_792_458; // Скорость света в вакууме, м/с
     static final double REFRACTION_INDEX = 1.4682; // Коэффициент преломления оптического волокна
 
+    static int cursor; // Курсор для перемещения по бинарному файлу
+
+    public static String extractParameters(String hexContent) {
+        String date; // Дата и время измерений
+        String distanceUnits; // Единицы измерения расстояния
+
+        // Преобразование строки "FxdParams" к определенному виду для дальнейшего поиска блока FxdParams по файлу
+        cursor = hexContent.lastIndexOf(HexKit.compareToHex("FxdParams")) + START_BLOCK + ONE_BYTE;
+        date = String.valueOf(HexKit.compareToDec(HexKit.hexScanner(hexContent, cursor, LONG_INT_HEX)));
+        System.out.println(date);
+        cursor += LONG_INT_HEX;
+        distanceUnits = "" + (char)HexKit.compareToDec(HexKit.hexScanner(hexContent, cursor, ONE_BYTE)) +
+                (char)HexKit.compareToDec(HexKit.hexScanner(hexContent, cursor + ONE_BYTE, ONE_BYTE));
+        System.out.println(distanceUnits);
+        return "";
+    }
+
     public static String[] extractEvents(String hexContent) {
         int countEvents; // Общее количество событий в блоке KeyEvents
-        int cursor; // Курсор для перемещения по бинарному файлу
         int eventCursor; // Курсор начала каждого события
         double transitTime; // Время распространения импульса в с
 
@@ -18,7 +34,7 @@ public class EventProcessing {
         String[] arrayEven; // Массив событий KeyEvents
 
         // Преобразование строки "KeyEvents" к определенному виду для дальнейшего поиска блока KeyEvents по файлу
-        eventCursor = hexContent.lastIndexOf(HexKit.compareToHex("KeyEvents")) + KEY_EVENTS_START_BLOCK + ONE_BYTE;
+        eventCursor = hexContent.lastIndexOf(HexKit.compareToHex("KeyEvents")) + START_BLOCK + ONE_BYTE;
         countEvents = (int) HexKit.compareToDec(HexKit.hexScanner(hexContent, eventCursor, 1));
 
         // Первое событие находится около курсора, перемещаем его на безопасное расстояние
