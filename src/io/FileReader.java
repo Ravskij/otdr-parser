@@ -1,7 +1,10 @@
 package io;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileReader {
 
@@ -19,6 +22,24 @@ public class FileReader {
         } catch (IOException e) {
             System.out.println(e.getMessage());
             return null;
+        }
+    }
+
+    public static String[] folderFiles(String path) {
+        List<String> sorFileList = new ArrayList<>();
+        File folder = new File(path);
+        if (folder.isDirectory()) {
+            for (File file : folder.listFiles()) {
+                if (file.getName().contains(".sor")) {
+                    sorFileList.add(file.getName());
+                }
+            }
+
+            return sorFileList.toArray(new String[0]);
+        } else {
+            System.out.println("Введено имя файла, а не путь к папке");
+
+            return new String[]{path};
         }
     }
 

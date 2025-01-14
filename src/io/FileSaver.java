@@ -3,6 +3,8 @@ package io;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class FileSaver {
 
@@ -24,7 +26,7 @@ public class FileSaver {
                     "Расстояние, км\t" +
                     "Коэффициент затухания, дБ/км\t" +
                     "Затухание в соединении, дБ\t" +
-                    "Коэффициент отражения, дБ\t").append("\n");
+                    "Коэффициент отражения, дБ");
             for (int i = 0; i < content.length; i++) {
                 fileWriter.append(content[i]).append("\n");
             }
@@ -41,6 +43,20 @@ public class FileSaver {
                 System.out.println("Файл создан");
             } else {
                 System.out.println("Ошибка при создании файла");
+            }
+        }
+    }
+
+    public static void isExist(String path) {
+        if (Files.exists(Path.of(path))) {
+            System.out.println("Папка уже существует");
+        } else {
+            try {
+                Files.createDirectories(Path.of(path));
+                System.out.println("Папка создана");
+            } catch (IOException e) {
+                System.out.println("Ошибка при создании папки");
+                System.out.println(e.getMessage());
             }
         }
     }
