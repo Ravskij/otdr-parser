@@ -21,11 +21,13 @@ public class FileReader {
             return fileContent.toString();
         } catch (IOException e) {
             System.out.println(e.getMessage());
+
             return null;
         }
     }
 
-    public static String[] folderFiles(String path) {
+    // Возвращает массив строк с именами .sor
+    public static String[] sorInDirectory(String path) {
         List<String> sorFileList = new ArrayList<>();
         File folder = new File(path);
         if (folder.isDirectory()) {
