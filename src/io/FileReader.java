@@ -8,8 +8,11 @@ import java.util.List;
 
 public class FileReader {
 
+    private int start = Integer.MAX_VALUE; // Стартовый номер символа в череде несовпадений названия файла
+    private int end = Integer.MAX_VALUE; // Последний номер символа в череде несовпадений названия файла
+
     // Чтение данных из бинарного файла и запись содержимого в строку
-    public static String sorReader(String path) {
+    public String sorReader(String path) {
         try {
             FileInputStream fileInputStream = new FileInputStream(path);
             StringBuilder fileContent = new StringBuilder();
@@ -27,7 +30,7 @@ public class FileReader {
     }
 
     // Возвращает массив строк с именами .sor
-    public static String[] sorInDirectory(String path) {
+    public String[] sorInDirectory(String path) {
         List<String> sorFileList = new ArrayList<>();
         File folder = new File(path);
         if (folder.isDirectory()) {
@@ -43,6 +46,39 @@ public class FileReader {
 
             return new String[]{path};
         }
+    }
+
+    // Определение границ различия в названии файла (номер волокна)
+    public void fiberNumberWidth(String[] sorFiles) {
+
+        boolean flag = false;
+        int fileLength = sorFiles[0].length();
+
+        for (int i = 0; i < sorFiles.length - 1; i++) {
+            if (fileLength == sorFiles[i].length()) {
+                for (int j = 0; j < fileLength; j++) {
+                    if (sorFiles[i].charAt(j) != sorFiles[i + 1].charAt(j)) {
+                        if (start > j) {
+                            start = j;
+                            flag = true;
+                        }
+                    } else {
+                        if (flag && end > j) {
+                            end = j;
+                            flag = false;
+                        }
+                    }
+                }
+                flag = false;
+            } else {
+                throw new IllegalArgumentException("Различие в длине имен файлов");
+            }
+        }
+    }
+
+    // Определение номера волокна по имени файла с учетом ранее определенных границ различия в именах
+    public int fiberNumber(String file) {
+        return Integer.parseInt(file.substring(start, end));
     }
 
 }
