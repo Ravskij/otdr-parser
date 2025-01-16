@@ -17,7 +17,7 @@ public class FileSaver {
         createFile(filePath);
     }
 
-    public void writeInCSV(List<KeyEvents> keyEvents, String filePath) {
+    public void writeInCSV(List<KeyEvents> keyEvents) {
         try {
             FileWriter writer = new FileWriter(filePath);
             writer.append("\"Number\";" +
@@ -34,6 +34,20 @@ public class FileSaver {
             }
             writer.flush();
             writer.close();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static void writeInOneCSV(List<KeyEvents> keyEvents, String path) {
+        try {
+            FileWriter writer = new FileWriter(path);
+            writer.append("\"Number\";" +
+                    "\"Distance, km\";" +
+                    "\"Attenuation coef, dB/km\";" +
+                    "\"Attenuation in conn, dB\";" +
+                    "\"Reflection coef, dB\"\n");
+            writer.flush();
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -69,6 +83,14 @@ public class FileSaver {
                 System.out.println(e.getMessage());
             }
         }
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 
 }
